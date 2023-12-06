@@ -1,1 +1,1 @@
-# icomoco
+# iCoMoCo Resontruction in Gadgetron
