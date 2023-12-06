@@ -1,0 +1,10 @@
+name: gadgetron
+dependencies:
+  - pip:
+    - junitparser==2.2.0
+    - cupy-cuda11x
+    - scikit-image
+    - nibabel
+    - opticalflow3D
+    
+    

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <version>2</version>
+
+    <readers>
+        <reader>
+            <dll>gadgetron_core_readers</dll>
+            <classname>AcquisitionReader</classname>
+        </reader>
+        <reader>
+            <dll>gadgetron_core_readers</dll>
+            <classname>WaveformReader</classname>
+        </reader>
+    </readers>
+
+    <writers>
+        <writer>
+            <dll>gadgetron_core_writers</dll>
+            <classname>ImageWriter</classname>
+        </writer>
+    </writers>
+
+    <stream>
+      
+    <!-- Noise prewhitening -->
+        <gadget>
+            <dll>gadgetron_mricore</dll>
+            <classname>NoiseAdjustGadget</classname>
+
+        </gadget>
+        
+            <!-- Convert gradient waveforms into trajectories -->
+             <gadget>
+                <name>WaveformToTrajectory</name>
+                <dll>nhlbi_gt_toolbox</dll>
+                <classname>WaveformToTrajectory</classname>
+                <property><name>perform_GIRF</name><value>true</value></property>
+                <property><name>GIRF_folder</name><value>/opt/data/GIRF/</value></property>
+                <property><name>generateTraj</name><value>false</value></property>
+            </gadget>
+
+            <gadget>
+                <name>RemoveSpiralOversampling</name>
+                <dll>nhlbi_gt_toolbox</dll>
+                <classname>RemoveSpiralOversampling</classname>
+            </gadget>
+        <!--  <external>
+            <connect address="kauai.nhlbi.nih.gov" port="18000"/>-->
+            <!-- <execute name="gadgetron.nhlbi.binning_data" type="matlab"/> -->
+            <!-- <configuration/>
+            </external> -->
+            
+        <external>
+            <execute name="BinningGadget" target="BinningGadget" type="python"/>
+            <configuration>
+                <property name="stableBinning"         value="False"/>
+                <property name="bidirectional"         value="True"/>
+                <property name="evenbins"         value="True"/>
+                <property name="numBins"         value="12"/> <!--Set this way because we have 3 gpus-->
+            </configuration>
+
+            <configuration/>
+        </external> 
+
+        <gadget>
+            <name>ImagetoVector</name>
+            <dll>nhlbi_gt_toolbox</dll>
+            <classname>ImagetoVector</classname>
+        </gadget> 
+
+        <gadget>
+                <dll>gadgetron_mricore</dll>
+                <classname>PCACoilGadget</classname>
+            </gadget>
+
+            <gadget>
+                <dll>gadgetron_mricore</dll>
+                <classname>CoilReductionGadget</classname>
+                <property name="coils_out" value="10"/>
+            </gadget>
+            
+        
+      <!--  <gadget>
+            <name>SpiralConcomitantCorrectionGadget</name>
+            <dll>nhlbi_gt_toolbox</dll>
+            <classname>SpiralConcomitantCorrectionGadget</classname>
+        </gadget>
+        <gadget>
+            <name>WeightsEstimationGadget</name>
+            <dll>nhlbi_gt_toolbox</dll>
+            <classname>WeightsEstimationGadget</classname>
+            <property><name>iterations</name><value>15</value></property>
+            <property><name>overSampling</name><value>5.5</value></property>
+            <property><name>kernelWidth</name><value>6</value></property>
+        </gadget>-->
+
+       <gadget>
+            <name>SpiralTVRecon</name>
+            <dll>nhlbi_gt_toolbox</dll>
+            <classname>SpiralTVRecon</classname>
+            <property><name>iterations</name><value>3</value></property>
+            <property><name>iterations_imoco</name><value>10</value></property>
+            <property><name>iterationsOuter</name><value>10</value></property>
+            <property><name>iterationsInner</name><value>2</value></property>
+            <property><name>tolSense</name><value>1e-3</value></property>
+            <property><name>fwidth</name><value>24</value></property>
+            <property><name>fsigma</name><value>1.2</value></property>
+            <property><name>ftype</name><value>none</value></property>
+            <property><name>kappa</name><value>0.00</value></property>
+            <property><name>Debug</name><value>0</value></property>
+            <property><name>NoSense</name><value>0</value></property>
+            <property><name>lambdat</name><value>1</value></property>
+            <property><name>lambda</name><value>0.01</value></property>
+            <property><name>lambda_imoco</name><value>0.01</value></property>
+	        <property><name>alpha</name><value>5e-4</value></property>
+            <property><name>testLambdas</name><value>false</value></property>
+            <property><name>iMOCO</name><value>false</value></property>
+            <property><name>doMOCO</name><value>false</value></property>
+            <property><name>sendImocoBuffer</name><value>true</value></property>
+            <property><name>norm</name><value>2.0</value></property>
+            <property><name>doConcomitantFieldCorrection_motionResolved</name><value>false</value></property>
+            <property><name>doConcomitantFieldCorrection</name><value>true</value></property>
+            <property><name>moco_iter</name><value>50</value></property>
+        </gadget>
+
+        <gadget>
+            <name>ImageArraySplit</name>
+            <dll>gadgetron_mricore</dll>
+            <classname>ImageArraySplitGadget</classname>
+        </gadget>
+
+       <external>
+          <!--<connect port="2100"/>-->
+          <!--<connect port="21000" address="137.187.135.100"/>-->
+          <execute name="registration_gadget" target="registration_gadget" type="python"/>
+            <configuration>
+                <property name="bidirectional"         value="True"/>
+            </configuration>
+          <!--<execute name="gadgetron.nhlbi.motion_correction" type="matlab"/> -->
+          <configuration/>
+        </external>
+
+         <gadget>
+            <name>SpiraliCoMocoRecon</name>
+            <dll>nhlbi_gt_toolbox</dll>
+            <classname>SpiraliCoMocoRecon</classname>
+            <property><name>iterations_imoco</name><value>5</value></property>
+            <property><name>tolerance</name><value>200</value></property>
+            <property><name>fwidth</name><value>24</value></property>
+            <property><name>fsigma</name><value>1.2</value></property>
+            <property><name>ftype</name><value>none</value></property>
+            <property><name>kappa</name><value>0.00</value></property>
+            <property><name>Debug</name><value>0</value></property>
+            <property><name>lambda_imoco</name><value>0.05</value></property>
+            <property><name>norm</name><value>2.0</value></property>
+        </gadget>
+
+        <gadget>
+            <name>ImageArraySplit</name>
+            <dll>gadgetron_mricore</dll>
+            <classname>ImageArraySplitGadget</classname>
+        </gadget>
+
+        <gadget>
+            <name>ComplexToFloatAttrib</name>
+            <dll>gadgetron_mricore</dll>
+            <classname>ComplexToFloatGadget</classname>
+        </gadget>
+        
+      <!--  <gadget>
+            <name>scalingGadget</name>
+            <dll>nhlbi_gt_toolbox</dll>
+            <classname>scalingGadget</classname>
+        </gadget>-->
+        
+         <gadget>
+            <name>AutoScaleGadget</name>
+            <dll>gadgetron_mricore</dll>
+            <classname>AutoScaleGadget</classname>
+        </gadget> 
+
+       <gadget>
+            <name>FloatToShort</name>
+            <dll>gadgetron_mricore</dll>
+            <classname>FloatToUShortGadget</classname>
+        </gadget>
+
+        <gadget>
+            <name>ImageFinish</name>
+            <dll>gadgetron_mricore</dll>
+            <classname>ImageFinishGadget</classname>
+        </gadget>
+        
+    </stream>
+</configuration>
