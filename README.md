@@ -29,7 +29,7 @@ where the local data folder is the path to a folder containing raw data that can
 
 once the docker container is running start a bash terminal inside the container using: 
 
-`docker exec -ti deplot_rt bash` 
+`docker exec -ti deploy_rt bash` 
 
 then you can simply navigate to `/opt/data/` and test the code using: 
 
