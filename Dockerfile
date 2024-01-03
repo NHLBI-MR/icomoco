@@ -9,13 +9,13 @@ ARG USER_UID
 USER ${USER_UID}
 WORKDIR /opt
 
-RUN mkdir -p /opt/code/NHLBI-GT-Non-Cartesian
-COPY --chown=$USER_UID:conda NHLBI-GT-Non-Cartesian/ /opt/code/NHLBI-GT-Non-Cartesian/
+RUN mkdir -p /opt/code/icomoco
+COPY --chown=$USER_UID:conda icomoco/ /opt/code/icomoco/
 SHELL ["/bin/bash", "-c"]
 
 # Update the conda env
 RUN . /opt/conda/etc/profile.d/conda.sh && umask 0002 && conda activate gadgetron && umask 0002 && /opt/conda/bin/mamba \
-env update --file /opt/code/NHLBI-GT-Non-Cartesian/environment.yml
+env update --file /opt/code/icomoco/environment.yml
 
 FROM gadgetron_cudabuild_env AS gadgetron_nhlbicudabuild
 ARG USER_UID
@@ -23,14 +23,14 @@ USER ${USER_UID}
 WORKDIR /opt
 
 RUN mkdir -p /opt/GIRF
-COPY --chown=$USER_UID:conda NHLBI-GT-Non-Cartesian/GIRF/ /opt/GIRF/
+COPY --chown=$USER_UID:conda icomoco/GIRF/ /opt/GIRF/
 
-RUN mkdir -p /opt/code/NHLBI-GT-Non-Cartesian
-COPY --chown=$USER_UID:conda NHLBI-GT-Non-Cartesian/ /opt/code/NHLBI-GT-Non-Cartesian/
+RUN mkdir -p /opt/code/icomoco
+COPY --chown=$USER_UID:conda icomoco/ /opt/code/icomoco/
 SHELL ["/bin/bash", "-c"]
 
 RUN . /opt/conda/etc/profile.d/conda.sh && umask 0002 && conda activate gadgetron && sh -x && \
-    cd /opt/code/NHLBI-GT-Non-Cartesian && \
+    cd /opt/code/icomoco && \
     mkdir build && \
     cd build && \
     /opt/conda/envs/gadgetron/bin/cmake ../ -GNinja -DUSE_MKL=ON -DUSE_CUDA=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/package -DCMAKE_PREFIX_PATH=/opt/package && \
@@ -50,6 +50,6 @@ RUN chmod +x /opt/entrypoint.sh
 RUN sudo mkdir -p /opt/integration-test && sudo chown ${USER_GID}:${USER_UID} /opt/integration-test
 COPY --from=gadgetron_cudabuild --chown=$USER_UID:conda /opt/code/gadgetron/test/integration /opt/integration-test/
 RUN mkdir -p /opt/GIRF
-COPY --chown=$USER_UID:conda NHLBI-GT-Non-Cartesian/GIRF/ /opt/GIRF/
+COPY --chown=$USER_UID:conda icomoco/GIRF/ /opt/GIRF/
 
 ENTRYPOINT [ "/tini", "--", "/opt/entrypoint.sh" ]
