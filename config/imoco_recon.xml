@@ -35,7 +35,7 @@
                 <dll>nhlbi_gt_toolbox</dll>
                 <classname>WaveformToTrajectory</classname>
                 <property><name>perform_GIRF</name><value>true</value></property>
-                <property><name>GIRF_folder</name><value>/opt/data/GIRF/</value></property>
+                <property><name>GIRF_folder</name><value>/opt/GIRF/</value></property>
                 <property><name>generateTraj</name><value>false</value></property>
             </gadget>
 
