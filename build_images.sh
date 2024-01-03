@@ -2,7 +2,7 @@
 
 if [ $# -lt 2 ]
 then
-    base_name=" gadgetronnhlbi/ubuntu_2004_cuda117_lit"
+    base_name=" gadgetronnhlbi/ubuntu_2004_cuda117_public_icomoco"
 else
     if [ $# -eq 2 ]
     then
@@ -11,7 +11,7 @@ else
     fi
 fi
 
-#base_name=" gadgetronnhlbi/ubuntu_2004_cuda117_lit"
+#base_name=" gadgetronnhlbi/ubuntu_2004_cuda117_public_icomoco"
 dev_name="$base_name:$1_dev"
 rt_name="$base_name:$1_rt"
 
