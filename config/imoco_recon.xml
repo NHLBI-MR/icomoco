@@ -37,6 +37,7 @@
                 <property><name>perform_GIRF</name><value>true</value></property>
                 <property><name>GIRF_folder</name><value>/opt/GIRF/</value></property>
                 <property><name>generateTraj</name><value>false</value></property>
+                <property><name>attachWaveform</name><value>true</value></property>
             </gadget>
 
             <gadget>
@@ -145,7 +146,7 @@
             <dll>nhlbi_gt_toolbox</dll>
             <classname>SpiraliCoMocoRecon</classname>
             <property><name>iterations_imoco</name><value>5</value></property>
-            <property><name>tolerance</name><value>200</value></property>
+            <property><name>tolerance</name><value>1e-3</value></property>
             <property><name>fwidth</name><value>24</value></property>
             <property><name>fsigma</name><value>1.2</value></property>
             <property><name>ftype</name><value>none</value></property>
