@@ -22,6 +22,9 @@ ARG USER_UID
 USER ${USER_UID}
 WORKDIR /opt
 
+RUN mkdir -p /opt/GIRF
+COPY --chown=$USER_UID:conda NHLBI-GT-Non-Cartesian/GIRF/ /opt/GIRF/
+
 RUN mkdir -p /opt/code/NHLBI-GT-Non-Cartesian
 COPY --chown=$USER_UID:conda NHLBI-GT-Non-Cartesian/ /opt/code/NHLBI-GT-Non-Cartesian/
 SHELL ["/bin/bash", "-c"]
